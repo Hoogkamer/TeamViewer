@@ -41,7 +41,7 @@ new Vue({
         searchresults: function () {
             if (this.search.length === 0) return [];
             var that = this;
-            var result = this.searchList.filter(function (e) { return e.name.toLowerCase().indexOf(that.search.toLowerCase()) !== -1 })
+            var result = this.searchList.filter(function (e) { console.log(e, that.search); return e.name.toLowerCase().indexOf(that.search.toLowerCase()) !== -1 })
             return result;
         }
     },
@@ -294,14 +294,17 @@ new Vue({
    
             this.level0.forEach(function (level0Item) {
                 level0Item.level1.forEach(function (level1Item) {
-                    that.searchList.push({ name: level1Item.lead.name, info: level1Item.name, subgroup: level1Item, team: null })
+                    if (level1Item.lead.name)
+                        that.searchList.push({ name: level1Item.lead.name, info: level1Item.name, subgroup: level1Item, team: null })
                     that.searchList.push({ name: level1Item.name, info: 'Grid', subgroup: level1Item, team: null })
                     level1Item.newGroupId = level0Item.name;
                     level1Item.teams.forEach(function (teamItem) {
-                        that.searchList.push({ name: teamItem.lead.name, info: teamItem.name, subgroup: level1Item, team: teamItem })
+                        if (teamItem.lead.name)
+                            that.searchList.push({ name: teamItem.lead.name, info: teamItem.name, subgroup: level1Item, team: teamItem })
                         that.searchList.push({ name: teamItem.name, info: 'Team', subgroup: level1Item, team: teamItem })
                         teamItem.members.forEach(function (member) {
-                            that.searchList.push({ name: member.name, info: teamItem.name, subgroup: level1Item, team: teamItem })
+                            if (member.name)
+                                that.searchList.push({ name: member.name, info: teamItem.name, subgroup: level1Item, team: teamItem })
                         })
                     })
                 })

@@ -67,7 +67,7 @@ h2, h3 {
   }
 
   #searchresults {
-    width:400px;
+    width:300px;
     max-height: 500px;
     border:1px solid grey;
     position: absolute;
@@ -75,7 +75,10 @@ h2, h3 {
     background-color: white;
     overflow-y:scroll;
     overflow-x: hidden;
-    margin-left: -200px;
+    margin-left: -100px;
+    font-size:14px;
+    color:black;
+    text-align: left;
   }
   #searchresults .info {
       color:grey;
