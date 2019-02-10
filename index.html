@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html style="font-family: arial">
+
+<!-- created by Michael Hoogkamer -->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="UTF-8">
+    <title>Retail Landschap</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower|Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="libs/fontawesome/all.css">
+</head>
+
+<body>
+
+
+    <div id="app">
+        <div v-cloak>
+            <div id='errors' v-if="importErrors">
+                <button v-on:click="importErrors=''">Close</button>
+                <div v-html="importErrors"></div>
+            </div>
+
+            <div id="title">
+               
+                    {{headerTitle}}
+               
+                <div id='searchcontainer'>
+                    <input id='searchbox' type="text" v-model="search" placeholder="Search person or team...." />
+                    <div v-if="searchresults.length" id='searchresults'>
+                        <table>
+                            <tr v-for="result in searchresults" v-on:click="gotoItem(result)">
+                                <td>{{result.name}}
+                                    <span class="info">| {{result.info}}</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="editmenu" v-if="editable">
+                <label for="files" class="btn">Load</label>
+                <input ref='loadfile' id="files" style="visibility:hidden;width:0px" type="file" v-on:change="loadAll($event)">
+                <button v-on:click="saveAll()" class='btn'>Save</button> ||
+                <label for="files1" class="btn">Import</label>
+                <input ref='importfile' id="files1" style="visibility:hidden;width:0px" type="file" v-on:change="importData($event)">
+
+                <button v-on:click="exportData()" class='btn'>Export</button>
+                ||
+                <button v-on:click="clearAll()" class='btn'>Remove all</button>
+            </div>
+            <div id="topdiv">
+                <!-- Maingroups (Businessline)-->
+                <draggable v-model="level0" class="draggable">
+                    <div class='level0' v-for="mainGroup, index in level0">
+                        <div class="level0_title">
+                            <template v-if="!mainGroup.edit">
+                                {{mainGroup.name}}
+                            </template>
+                            <template v-else>
+                                <textarea class="tarea" v-model="mainGroup.name" placeholder="enter name"> </textarea>
+                            </template>
+                        </div>
+                        <!-- Subgroups (GRID)-->
+                        <draggable v-model="mainGroup.level1">
+                            <div class='level1' :style="{backgroundColor:subGroup.type.color}" v-for="subGroup, index1 in mainGroup.level1" v-on:click="showSubGroup(mainGroup,subGroup)">
+
+                                <div class='title'>
+                                    {{subGroup.name}}
+                                </div>
+                                <div class='subtitle'>
+                                    {{subGroup.lead.name}}
+                                </div>
+                                <button v-if="mainGroup.edit" v-on:click.stop="deleteLevel1(mainGroup, index1)" class="delete">
+                                    <i class='far fa-trash-alt white'></i>
+                                </button>
+                            </div>
+                        </draggable>
+                        <!-- END Subgroups-->
+
+                        <div v-if="mainGroup.edit">
+                            <button class="add" v-on:click="addLevel1(mainGroup)">
+                                <i class="far fa-plus-square"></i>
+                            </button>
+                        </div>
+
+                        <div class="editmenu" v-if="editable">
+                            <button class="delete" v-if="mainGroup.edit" v-on:click="deleteLevel0(index)">Delete</button>
+                            <button v-on:click="mainGroup.edit=!mainGroup.edit" class="edit">
+                                <i class='fas fa-pencil-alt' v-bind:class="{red:mainGroup.edit} "></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class='level0' v-if="editable">
+
+                        <button class="add" v-on:click="addLevel0">
+                            <i class="far fa-plus-square"></i>
+                        </button>
+
+                    </div>
+                </draggable>
+                <!-- END Maingroups-->
+                <div id='footer'>
+                    Updated on: {{updatedOn}}
+                </div>
+
+                <!-- Subgroup (GRID) display page -->
+                <div id='subgroup' v-if="subgroupDisplay" v-bind:class="{transparent:teamDisplay}">
+                    <div class='title'>
+                        <button v-on:click="subgroupDisplay=null" class="close">Close</button>
+                        <button v-on:click="subgroupDisplay.edit=!subgroupDisplay.edit" class="edit" v-if="editable">
+                            <i class='fas fa-pencil-alt' v-bind:class="{red:subgroupDisplay.edit} "></i>
+                        </button>
+                        <template v-if="!subgroupDisplay.edit || !editable">
+                            <h2>{{subgroupDisplay.name}}</h2>
+                        </template>
+                        <template v-else>
+                            <input v-model="subgroupDisplay.name" placeholder="Enter grid name....">
+                        </template>
+                    </div>
+                    <div class="container">
+                        <div class="info">
+
+                            <h3>Lead</h3>
+                            <div class="leadsection">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <template v-if="!subgroupDisplay.edit || !editable">
+                                                <a class='conlink' :href="subgroupDisplay.lead.url"
+                                                    target="_blank">
+                                                    <div class="owner" :class="{highlight:subgroupDisplay.lead.name===highlightPerson}">
+                                                        <img class="photo" :src="subgroupDisplay.lead.url">
+                                                        <br> {{subgroupDisplay.lead.name}}
+                                                    </div>
+                                                </a>
+                                        </td>
+                                        </template>
+                                        <template v-else>
+                                            <img class="photo_preview" :src="subgroupDisplay.lead.url">
+                                            <br>Lead name:
+                                            <br>
+                                            <input v-model="subgroupDisplay.lead.name">
+                                            <br> Lead Corp ID:
+                                            <br>
+                                            <input v-model="subgroupDisplay.lead.id">
+                                            <br> Photo URL:
+                                            <br>
+                                            <input v-model="subgroupDisplay.lead.url">
+                                        </template>
+                                        <td>
+                                            <template v-if="!subgroupDisplay.edit || !editable">
+                                                <div class="description" v-html="subgroupDisplay.description"></div>
+                                            </template>
+                                            <template v-else>
+
+                                                <textarea v-model="subgroupDisplay.description" placeholder="Enter description"></textarea>
+
+                                            </template>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="details">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            Business line:
+                                        </td>
+                                        <td>
+                                            <template v-if="!subgroupDisplay.edit || !editable">
+                                                {{subgroupDisplay.group.name}}
+                                            </template>
+                                            <template v-else>
+                                                <select v-model="subgroupDisplay.newGroupId" v-on:change="moveSubGroup(subgroupDisplay)">
+                                                    <option v-for="option in level0" v-bind:value="option.name">
+                                                        {{ option.name }}
+                                                    </option>
+                                                </select>
+                                            </template>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Type:
+                                        </td>
+                                        <td>
+                                            <template v-if="!subgroupDisplay.edit || !editable">
+                                                {{subgroupDisplay.type.name}}
+                                            </template>
+                                            <template v-else>
+                                                <select v-model="subgroupDisplay.type" v-on:change="">
+                                                    <option v-for="option in groupTypes" v-bind:value="option">
+                                                        {{ option.name }}
+                                                    </option>
+                                                </select>
+                                            </template>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Links:
+                                        </td>
+                                        <td>
+                                            <!--
+                                        <template v-if="subgroupDisplay['Grid Community URL'].length>0">
+                                            <a target="_blank" :href="subgroupDisplay['Grid Community URL']">Connections</a>
+                                        </template>
+                                        <template v-else>
+                                            <span class='warning' title='Connections community page is missing'>No Connections</span>
+                                        </template>
+                                        -->
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="blocks">
+                            <h3>Teams</h3>
+                            <draggable v-model="subgroupDisplay.teams" class="draggable">
+                                <div :class="{'block':1}" v-for="team, index2 in subgroupDisplay.teams" v-on:click="showTeam(subgroupDisplay, team)">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <img v-if="team.lead.id.length" class="photo" :src="team.lead.url">
+                                                <img v-else class="photo" src="images/no_po.svg">
+                                            </td>
+                                            <td>
+                                                <div class='name'> {{team.name}} </div>
+                                                <div v-if="team.lead.name.length" class='lead'> {{team.lead.name}} </div>
+                                                <div v-else class='owner none'> No lead </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <button v-if="subgroupDisplay.edit && editable" v-on:click.stop="deleteTeam(subgroupDisplay, index2)" class="delete">
+                                        <i class='far fa-trash-alt white'></i>
+                                    </button>
+                                </div>
+                            </draggable>
+                            <div class="block empty" v-if="subgroupDisplay.edit && editable">
+                                <button class="add" v-on:click="addTeam(subgroupDisplay)">
+                                    <i class="far fa-plus-square"></i>
+                                </button>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <!-- END Subgroup display page -->
+
+                <!-- Team (BLOCK) display page -->
+                <div id='team' v-if="teamDisplay">
+                    <div class='title'>
+                        <button v-on:click="teamDisplay=null" class="close">Close</button>
+                        <button v-on:click="teamDisplay.edit=!teamDisplay.edit" class="edit">
+                            <i class='fas fa-pencil-alt' v-bind:class="{red:teamDisplay.edit}" v-if="editable"></i>
+                        </button>
+                        <template v-if="!teamDisplay.edit || !editable">
+                            <h2>Team: {{teamDisplay.name}}</h2>
+                        </template>
+                        <template v-else>
+                            <input v-model="teamDisplay.name" placeholder="Enter team name...">
+                        </template>
+                    </div>
+                    <div class="container">
+                        <div class="info">
+                            <div class="leadsection">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <template v-if="!teamDisplay.edit || !editable">
+                                                <a class='conlink' :href="teamDisplay.lead.url"
+                                                    target="_blank">
+                                                    <div class="owner" :class="{highlight:teamDisplay.lead.name===highlightPerson}">
+                                                        <img class="photo" :src="teamDisplay.lead.url">
+                                                        <br> {{teamDisplay.lead.name}}
+                                                    </div>
+                                                </a>
+                                        </td>
+                                        </template>
+                                        <template v-else>
+                                            <img class="photo_preview" :src="teamDisplay.lead.url">
+
+                                            <br>Lead name:
+                                            <br>
+                                            <input v-model="teamDisplay.lead.name">
+                                            <br> Lead Corp ID:
+                                            <br>
+                                            <input v-model="teamDisplay.lead.id">
+                                            <br> Lead Url:
+                                            <br>
+                                            <input v-model="teamDisplay.lead.url">
+                                        </template>
+                                        <td>
+                                            <template v-if="!teamDisplay.edit || !editable">
+                                                <div class="description" v-html="teamDisplay.description"></div>
+                                            </template>
+                                            <template v-else>
+                                                <textarea v-model="teamDisplay.description" placeholder="Enter description..."></textarea>
+                                            </template>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="details">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            Business line:
+                                        </td>
+                                        <td>
+                                            <template v-if="!teamDisplay.edit || !editable">
+                                                {{subgroupDisplay.group.name}}
+                                            </template>
+                                            <template v-else>
+                                                <select v-model="subgroupDisplay.newGroupId" v-on:change="moveSubGroup(subgroupDisplay)">
+                                                    <option v-for="option in level0" v-bind:value="option.id">
+                                                        {{ option.name }}
+                                                    </option>
+                                                </select>
+                                            </template>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Type:
+                                        </td>
+                                        <td>
+                                            <template v-if="!teamDisplay.edit || !editable">
+                                                {{subgroupDisplay.type.name}}
+                                            </template>
+                                            <template v-else>
+                                                <select v-model="subgroupDisplay.type" v-on:change="">
+                                                    <option v-for="option in groupTypes" v-bind:value="option">
+                                                        {{ option.name }}
+                                                    </option>
+                                                </select>
+                                            </template>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Links:
+                                        </td>
+                                        <td>
+                                            <!--
+                                        <template v-if="subgroupDisplay['Grid Community URL'].length>0">
+                                            <a target="_blank" :href="subgroupDisplay['Grid Community URL']">Connections</a>
+                                        </template>
+                                        <template v-else>
+                                            <span class='warning' title='Connections community page is missing'>No Connections</span>
+                                        </template>
+                                        -->
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
+                        <div class="blocks">
+                            <h3>Members</h3>
+                            <draggable v-model="teamDisplay.members" class="draggable">
+                                <div class='member' :class="{highlight:member.name===highlightPerson}" v-for="member, memberIndex in teamDisplay.members">
+                                    <a class='conlink' :href="member.url" target="_blank"
+                                        v-if="!member.edit || !teamDisplay.edit || !editable">
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    <img class="photo" :src="member.url">
+                                                </td>
+                                                <td>
+                                                    <div class='name'> {{member.name}} </div>
+                                                    <div class='role'> {{member.role}} </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </a>
+                                    <table v-else>
+                                        <tr>
+                                            <td>
+                                                <img class="photo" :src="member.url">
+                                            </td>
+                                            <td>
+                                                <input v-model="member.name">
+                                                <input v-model="member.id">
+                                                <input v-model="member.url">
+                                                <input v-model="member.role">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <button v-if="teamDisplay.edit && editable" v-on:click="member.edit=!member.edit" class="edit">
+                                        <i class='fas fa-pencil-alt white' v-bind:class="{red:member.edit} "></i>
+                                    </button>
+                                    <button v-if="teamDisplay.edit && editable" v-on:click="deleteMember(teamDisplay, memberIndex)" class="delete">
+                                        <i class='far fa-trash-alt white'></i>
+                                    </button>
+                                </div>
+                            </draggable>
+
+                            <div v-if="teamDisplay.edit && editable" class="block empty">
+                                <button class="add" v-on:click="addMember(teamDisplay)">
+                                    <i class="far fa-plus-square"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- END Team display page -->
+
+            </div>
+        </div>
+    </div>
+    <script>
+        var editable = false;
+
+
+        
+    </script>
+    <script type='text/javascript' src="retail.js"></script>
+    <script type='text/javascript' src="config.js"></script>
+    <script type='text/javascript' src="libs/vue.js"></script>
+    <script type='text/javascript' src="libs/sortable.js"></script>
+    <script type='text/javascript' src="support.js"></script>
+    <script type='text/javascript' src="libs/vue-draggable.js"></script>
+    <script type='text/javascript' src="libs/filesaver.js"></script>
+    <script type="text/javascript" src="libs/xlsx.full.min.js"></script>
+    <script type='text/javascript' src="app.js"></script>
+    
+</body>
+
+</html>

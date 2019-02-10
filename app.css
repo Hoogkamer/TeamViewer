@@ -1,0 +1,571 @@
+[v-cloak] > * { display:none; }
+[v-cloak]::before { 
+  content: " ";
+  display: block;
+  width: 100%;
+  height: 600px;
+  margin-top:100px;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center; 
+
+  background-image: url('img/spinner.gif');
+}
+
+
+h2, h3 {
+    margin:0px;
+    display: block;
+    text-align: center;
+  }
+  body {
+      margin:0px 8px;
+  }
+  #errors {
+      position: absolute;
+      top:100px;
+      left:200px;
+      width:800px;
+      min-height: 50px;
+      border:2px solid red;
+      background-color: khaki;
+      z-index: 2;
+      padding:10px;
+  }
+  #errors h2 {
+      text-align: left;
+      margin-top:20px;
+  }
+  #errors table {
+      border:1px solid grey;
+  }
+  #errors table td {
+    border:1px solid grey;
+  }
+  
+  #editmenu {
+      border:1px solid red;
+      padding:5px;
+      margin-bottom:10px;
+  }
+  #footer {
+      width:100%;
+      text-align: center;
+  }
+  #searchcontainer {
+    right:14px;
+    width:200px;
+    margin-top: -35px;
+    position: absolute;
+  }
+  #searchbox {
+      width:100%;
+     
+  }
+  .highlight {
+    border-color:red !important;
+  }
+
+  #searchresults {
+    width:400px;
+    max-height: 500px;
+    border:1px solid grey;
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    overflow-y:scroll;
+    overflow-x: hidden;
+    margin-left: -200px;
+  }
+  #searchresults .info {
+      color:grey;
+      font-size:12px;
+  }
+  #searchresults table {
+    width: 100%;
+  }
+  #searchresults tr:hover td {
+    background:lightblue;
+    cursor: pointer;
+  }
+  #titlelogo {
+    width: 1320px;
+    height: auto;
+    margin: 0px 0px 0px 0px;
+    position: relative;
+  }
+  #editmenu .btn {
+      border:1px solid grey;
+      background: transparent;
+      padding:2px 4px;
+      font: 400 13.3333px Arial;
+
+  }
+
+  #editmenu .btn:hover {
+    cursor: pointer;
+  }
+  #app {
+    width: 1320px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+  }
+  #topdiv .draggable {
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+  
+  }
+#topdiv div{
+    vertical-align: top;
+   
+
+}
+.transparent {
+    display: none;
+}
+.level0 {
+    width:140px;
+    text-align: center;
+    vertical-align: top;
+    display: inline-table; 
+   
+    margin:5px;
+    padding:5px;
+    background-color: rgb(231, 232, 233);
+    border: 0px solid lightgrey;
+    border-radius: 10px;
+    text-align: center;
+    padding: 5px 5px;
+    box-shadow: 2px 5px 8px #888888;
+   
+}
+
+.level0_title {
+     font-size:12px;
+     height: 30px;
+}
+.level0_title .tarea {
+    height:40px;
+    width:118px;
+    margin-top:-20px;
+}
+.level1 {
+    margin: 5px 0px 0px 0px;
+    min-height: 56px;
+    border-radius: 5px;
+   
+    position: relative;
+    
+    cursor: pointer;    
+}
+div > .level1:hover{
+    background-color: grey !important;
+   
+}
+
+#title {
+  width: 100%;
+  height: 40px;
+  background-color: #51549e;
+  font-size:30px;
+  text-align: center;
+  font-weight: 600;
+  color:white;
+}
+.delete{
+    position: absolute;
+    bottom:2px;right:2px;
+}
+.level1 .title {
+    font-size: 11px;
+    min-height: 25px;
+    font-weight: 700;
+    padding: 5px 2px;
+}
+.level1 .subtitle {
+    font-size: 11px;
+    color: #313131;
+}
+.level1 .tarea {
+    height:30px;
+    width:118px;
+   
+}
+button:focus {outline:0;}
+button:hover {
+    cursor: pointer;
+}
+button.edit, button.delete{
+   
+    height: 20px;
+    width:20px;
+    border:none;
+    background: none;
+    
+}
+button.add{
+    width:50px;
+    height: 50px;
+    font-size: 3rem;
+    background: none;
+    border:none;
+    color:black;
+    display: inline-block;
+
+}
+.editmenu .delete {
+    color:red;
+    position:absolute;
+    left:0px;
+    background: none;
+    border:none;
+}
+.shiftup {
+    margin-top:-20px !important;
+}
+.red  {
+    color:red;
+}
+.white {
+    color:white;
+}
+.editmenu{
+    margin:0px;
+    padding:0px;
+    text-align: right;
+    position: relative;
+}
+.title input {
+    width:500px;
+}
+#subgroup {
+    position: absolute;
+    width:1200px;
+    background-color: #354667;
+    text-align: left;
+    color:white;
+    padding:5px;
+    top:120px;
+    border-radius: 20px;
+    padding:10px;
+}
+#subgroup .title {
+    text-align: center;
+    height: 28px;
+}
+
+#subgroup button.close{
+    position: absolute;
+    top:10px;left:10px;
+    border-radius:5px;
+  }
+  #subgroup button.edit{
+    position: absolute;
+    top:10px;left:80px;
+    border-radius:5px;
+  }
+
+  #subgroup .container {
+    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;      /* TWEENER - IE 10 */
+    display: -webkit-flex;     /* NEW - Chrome */
+    display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  }
+  #subgroup .info {
+    width:50%;
+  }
+  #subgroup .owner {
+    border:2px solid white;
+    background-color: white;
+    color:black;
+    width:144px;
+  }
+  #subgroup .owner .photo{
+    width:140px;
+    height:140px;
+  }
+  #subgroup .photo_preview {
+    width:70px;
+    height:70px;
+}
+  #subgroup a.conlink {
+    color:white;
+    background-color: transparent;
+    border: none;
+    padding:0px 0px;
+    text-decoration: none;
+}
+#subgroup .description {
+    font-size:12px;
+   
+    width:400px;
+    text-align: left;
+    padding:5px;
+  }
+#subgroup .details {
+    font-size:14px;
+    text-align: left;
+    margin:5px 0px;
+  }
+#subgroup .details table td {
+        text-align: left;
+}
+#subgroup .details table td:nth-child(1) {
+        color:#d8d8d8;
+}
+#subgroup .support {
+    width:600px;
+    border-top:1px solid white;
+    margin-top: 5px;
+    text-align: left;
+  }
+
+#subgroup .blocks {
+    border: 1px solid grey;
+  width:50%;
+  text-align: left;
+  padding:10px;
+  border-radius: 15px;
+}
+#subgroup .block{
+    width:280px;
+    min-height: 70px;
+    display: inline-block;
+    border:2px solid transparent;
+    margin: 2px 4px 0px 0px;
+    background-color: #5c85d6;
+    border-radius: 10px;
+    position: relative;
+  }
+  #subgroup .block:hover {
+      cursor: pointer;  
+        border-color:white;
+      }
+  }
+#subgroup .block .name {
+    font-size:16px;
+  margin:0px 5px;
+}
+#subgroup .block .lead {
+    font-size:12px;
+    color:lightgrey;
+    margin:0px 5px;
+}
+#subgroup .block .lead .none {
+    font-style: italic;
+    font-size:12px;
+    color:lightgrey;
+    margin:0px 5px;
+}
+#subgroup .block .photo {
+    width:60px;
+    height:60px;
+    border-radius: 40px;
+}
+#subgroup .empty {
+    background-color:transparent;
+    text-align: center;
+    border:1px solid #5c85d6;
+
+}
+#subgroup .empty .add {
+    margin-top:12px;
+}
+#team {
+    position: absolute;
+    width:1200px;
+    background-color: #5c85d6;
+    text-align: left;
+    color:white;
+    padding:5px;
+    top:120px;
+    border-radius: 20px;
+    padding:10px;
+}
+#team .title {
+    text-align: center;
+    height: 28px;
+}
+
+#team button.close{
+    position: absolute;
+    top:10px;left:10px;
+    border-radius:5px;
+  }
+  #team button.edit{
+    position: absolute;
+    top:10px;left:80px;
+    border-radius:5px;
+  }
+
+  #team .container {
+    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;      /* TWEENER - IE 10 */
+    display: -webkit-flex;     /* NEW - Chrome */
+    display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  }
+  #team .info {
+    width:35%;
+  }
+  #team .owner {
+    border:2px solid white;
+    background-color: white;
+    color:black;
+    width:144px;
+  }
+  #team .owner .photo{
+    width:140px;
+    height:140px;
+  }
+  #team .photo_preview {
+      width:70px;
+      heigth:70px;
+  }
+  #team a.conlink {
+    color:white;
+    background-color: transparent;
+    border: none;
+    padding:0px 0px;
+    text-decoration: none;
+}
+#team .description {
+    font-size:12px;
+   
+    width:200px;
+    text-align: left;
+    padding:5px;
+  }
+#team .details {
+    font-size:14px;
+    text-align: left;
+    margin:5px 0px;
+  }
+#team .details table td {
+        text-align: left;
+}
+#team .details table td:nth-child(1) {
+        color:#d8d8d8;
+}
+#team .support {
+    width:600px;
+    border-top:1px solid white;
+    margin-top: 5px;
+    text-align: left;
+  }
+
+#team .blocks {
+    border: 1px solid grey;
+  width:62%;
+  text-align: left;
+  padding:10px;
+  border-radius: 15px;
+}
+#team .block{
+    width:280px;
+    min-height: 79px;
+    display: inline-block;
+    border:2px solid transparent;
+    margin: 2px 4px 0px 0px;
+    background-color: #5c85d6;
+    border-radius: 10px;
+  }
+#team .block .name {
+    font-size:16px;
+  margin:0px 5px;
+}
+#team .block .lead {
+    font-size:12px;
+    color:lightgrey;
+    margin:0px 5px;
+}
+#team .block .lead .none {
+    font-style: italic;
+    font-size:12px;
+    color:lightgrey;
+    margin:0px 5px;
+}
+#team .block .photo {
+    width:60px;
+    height:60px;
+    border-radius: 40px;
+    margin:5px 0px 0px 5px;
+}
+#team .empty {
+    background-color:transparent;
+    text-align: center;
+    border:1px solid #5c85d6;
+
+}
+#team .empty .add {
+    margin-top:12px;
+}
+.container .leadsection {
+    min-height: 172px;
+}
+.container .leadsection textarea {
+    width:390px;
+    height:150px;
+}
+div#team textarea {
+    width:220px;
+    height:150px;
+}
+  .member {
+    width:240px;
+    display: inline-block;
+    background-color: #222731;
+    margin: 2px 4px 0px 0px;
+    border:2px solid transparent;
+    position: relative;
+  }
+  .member:hover{
+    border-color:white;
+    cursor: pointer;
+  }
+
+  .member .role  {
+    font-size:12px;
+    color:lightgrey;
+    margin:0px 5px;
+    
+  }
+
+  .member .role .none {
+    font-style: italic;
+    font-size:12px;
+    color:lightgrey;
+    margin:0px 5px;
+  }
+
+  .member .name {
+    font-size:14px;
+    margin:0px 5px;
+    text-align: left;
+       
+  }
+
+  .member .photo{
+    width:60px;
+    height:60px;
+    border-radius: 40px;
+    margin:5px 0px 0px 5px;
+  }
+  
+  .member .role{
+    text-align: left;
+    color:grey;
+    margin:0px 5px;
+  }
+  #team .member .edit {
+    position: absolute;
+    top: 5px;
+    left: 0px;
+  }
+ #topdiv {
+   margin-top:20px;
+ }
