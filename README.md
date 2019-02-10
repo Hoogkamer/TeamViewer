@@ -6,7 +6,7 @@ Static website (no webserver required) to generate and view an interactive team 
 
 [Demo](https://hoogkamer.github.io/TeamViewer/)
 
-![Screenshot](img/Capture.PNG?raw=true "Screenshot")
+![Screenshot](img/Capture.png?raw=true "Screenshot")
 
 
 ## Usage
